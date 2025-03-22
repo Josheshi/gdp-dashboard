@@ -1,0 +1,1080 @@
+# @title
+from IPython import get_ipython
+from IPython.display import display
+# %%
+import random
+import csv
+
+# Configuración del examen
+num_preguntas = 80  # Número de preguntas en el examen
+nota_aprobacion = 70  # Porcentaje mínimo para aprobar
+
+# Base de preguntas
+base_preguntas = [
+    {
+        "pregunta": "What are some SAP recommended guiding principles to achieve clean core operations? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Establish regular housekeeping tasks and procedures.",
+            "Integrate clean core practices in the end-to-end value process chain.",
+            "Establish release management.",
+            "Define roles and responsibilities as part of a process transformation office",
+            "Establish an organizational structure, technical foundation, and transformation methodology for clean core."
+        ],
+        "respuestas_correctas": [2, 3, 5]
+    },
+    {
+        "pregunta": "Which of the following can you use to explore released APIs?",
+        "opciones": [
+            "SAP Integration Suite",
+            "SAP Business Accelerator Hub",
+            "SAP Application Interface Framework"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "Which of the following API types does SAP recommend to use to achieve clean core integrations? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "SOAP",
+            "BRFC",
+            "OData",
+            "IDoc"
+        ],
+        "respuestas_correctas": [1, 3]
+    },
+    {
+        "pregunta": "Which model can be used for ABAP cloud-native development?",
+        "opciones": [
+            "The ABAP Cloud Development Model",
+            "The SAP S/4HANA Cloud Extensibility Model",
+            "ABAP RESTful Application Programming Model"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "How are pages assigned to users on the SAP Fiori Launchpad?",
+        "opciones": [
+            "Directly to business roles which are assigned to users",
+            "Via spaces assigned to business roles which are assigned to users",
+            "Via groups assigned to business roles which are assigned to users",
+            "Via sections assigned to business roles which are assigned to users"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "Which SAP Fiori apps can be run on any database? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Manage Chart of Accounts",
+            "Customer Accounting Document",
+            "Make Bank Transfers",
+            "Accounts Payable Overview"
+        ],
+        "respuestas_correctas": [1, 3]
+    },
+    {
+        "pregunta": "The SAP Business Network helps customers digitalize cross-company business processes. On which solutions does the network build? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Human Capital Management",
+            "Contingent Workforce",
+            "Travel",
+            "Sales",
+            "Procurement"
+        ],
+        "respuestas_correctas": [2, 3, 5]
+    },
+    {
+        "pregunta": "What are some features of SAP Business Technology Platform? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "It supports application development and integration.",
+            "It supports customers in understanding their stakeholder's needs.",
+            "It helps customers to collaborate to build flexible value chains.",
+            "It provides data management and analytics."
+        ],
+        "respuestas_correctas": [1, 4]
+    },
+    {
+        "pregunta": "Which component of the Intelligent Enterprise allows customers to discover and deploy vertical solutions from SAP and partners?",
+        "opciones": [
+            "Industry Cloud",
+            "Business Network",
+            "Intelligent Suite",
+            "Experience Management"
+        ],
+        "respuestas_correctas": [1]
+    },
+   {
+        "pregunta": "Which of the following organizational elements can be shared by several company codes? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Sales organization",
+            "Plant",
+            "Segment",
+            "Profit center",
+            "Business area"
+        ],
+        "respuestas_correctas": [3, 4, 5]
+    },
+    {
+        "pregunta": "Which of the following currency types can be defined for a specific ledger? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "00  Document currency",
+            "30 Group currency",
+            "60 Global company currency",
+            "10 Company code currency",
+            "40 Hard currency"
+        ],
+        "respuestas_correctas": [2, 3, 4]
+    },
+    {
+        "pregunta": "You want to assign your 3 newly created company codes to the same controlling area. Which settings must be common to all the company codes? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Operating chart of accounts",
+            "Fiscal year variant",
+            "Posting period variant",
+            "Source currency for group currency"
+        ],
+        "respuestas_correctas": [1, 2]
+    },
+    {
+        "pregunta": "At which level do you define functional areas?",
+        "opciones": [
+            "Financial statement version",
+            "Controlling area",
+            "Client",
+            "Company code"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "Your company follows IFRS accounting principles and needs to issue a full financial statement for its two main divisions Consumer Products & Professional Products. What do you need to achieve segment reporting in this scenario? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Profit centers",
+            "Segments",
+            "Document splitting",
+            "Profitability segments",
+            "Business areas"
+        ],
+        "respuestas_correctas": [1, 2, 3]
+    },
+    {
+        "pregunta": "Which object is used to directly support the preparation for consolidation?",
+        "opciones": [
+            "Functional Areas",
+            "Segments/Profit Centers",
+            "Company/Trading Partner",
+            "Ledgers/Ledger Groups"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "What are some SAP recommended guiding principles to achieve clean core operations? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Establish regular housekeeping tasks and procedures.",
+            "Integrate clean core practices in the end-to-end value process chain.",
+            "Establish release management.",
+            "Define roles and responsibilities as part of a process transformation office",
+            "Establish an organizational structure, technical foundation, and transformation methodology for clean core."
+        ],
+        "respuestas_correctas": [2, 3, 5]
+    },
+    {
+        "pregunta": "Which of the following can you use to explore released APIs?",
+        "opciones": [
+            "SAP Integration Suite",
+            "SAP Business Accelerator Hub",
+            "SAP Application Interface Framework"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "Which of the following API types does SAP recommend to use to achieve clean core integrations? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "SOAP",
+            "BRFC",
+            "OData",
+            "IDoc"
+        ],
+        "respuestas_correctas": [1, 3]
+    },
+    {
+        "pregunta": "Which model can be used for ABAP cloud-native development?",
+        "opciones": [
+            "The ABAP Cloud Development Model",
+            "The SAP S/4HANA Cloud Extensibility Model",
+            "ABAP RESTful Application Programming Model"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "How are pages assigned to users on the SAP Fiori Launchpad?",
+        "opciones": [
+            "Directly to business roles which are assigned to users",
+            "Via spaces assigned to business roles which are assigned to users",
+            "Via groups assigned to business roles which are assigned to users",
+            "Via sections assigned to business roles which are assigned to users"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "Which SAP Fiori apps can be run on any database? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Manage Chart of Accounts",
+            "Customer Accounting Document",
+            "Make Bank Transfers",
+            "Accounts Payable Overview"
+        ],
+        "respuestas_correctas": [1, 3]
+    },
+    {
+        "pregunta": "The SAP Business Network helps customers digitalize cross-company business processes. On which solutions does the network build? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Human Capital Management",
+            "Contingent Workforce",
+            "Travel",
+            "Sales",
+            "Procurement"
+        ],
+        "respuestas_correctas": [2, 3, 5]
+    },
+    {
+        "pregunta": "What are some features of SAP Business Technology Platform? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "It supports application development and integration.",
+            "It supports customers in understanding their stakeholder's needs.",
+            "It helps customers to collaborate to build flexible value chains.",
+            "It provides data management and analytics."
+        ],
+        "respuestas_correctas": [1, 4]
+    },
+    {
+        "pregunta": "Which component of the Intelligent Enterprise allows customers to discover and deploy vertical solutions from SAP and partners?",
+        "opciones": [
+            "Industry Cloud",
+            "Business Network",
+            "Intelligent Suite",
+            "Experience Management"
+        ],
+        "respuestas_correctas": [1]
+    },
+   {
+        "pregunta": "Which of the following organizational elements can be shared by several company codes? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Sales organization",
+            "Plant",
+            "Segment",
+            "Profit center",
+            "Business area"
+        ],
+        "respuestas_correctas": [3, 4, 5]
+    },
+    {
+        "pregunta": "Which of the following currency types can be defined for a specific ledger? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "00  Document currency",
+            "30 Group currency",
+            "60 Global company currency",
+            "10 Company code currency",
+            "40 Hard currency"
+        ],
+        "respuestas_correctas": [2, 3, 4]
+    },
+    {
+        "pregunta": "You want to assign your 3 newly created company codes to the same controlling area. Which settings must be common to all the company codes? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Operating chart of accounts",
+            "Fiscal year variant",
+            "Posting period variant",
+            "Source currency for group currency"
+        ],
+        "respuestas_correctas": [1, 2]
+    },
+    {
+        "pregunta": "At which level do you define functional areas?",
+        "opciones": [
+            "Financial statement version",
+            "Controlling area",
+            "Client",
+            "Company code"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "Your company follows IFRS accounting principles and needs to issue a full financial statement for its two main divisions Consumer Products & Professional Products. What do you need to achieve segment reporting in this scenario? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Profit centers",
+            "Segments",
+            "Document splitting",
+            "Profitability segments",
+            "Business areas"
+        ],
+        "respuestas_correctas": [1, 2, 3]
+    },
+    {
+        "pregunta": "Which object is used to directly support the preparation for consolidation?",
+        "opciones": [
+            "Functional Areas",
+            "Segments/Profit Centers",
+            "Company/Trading Partner",
+            "Ledgers/Ledger Groups"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "You want to implement purchase order accruals in SAP S/4HANA. Which of the following use cases are relevant? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Purchase of fixed assets (using direct capitalization method)",
+            "Purchase of consumable materials",
+            "Purchase of raw materials for inventory",
+            "Purchase of services"
+        ],
+        "respuestas_correctas": [2, 4]
+    },
+    {
+        "pregunta": "At which levels do you choose between direct and indirect quotation? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Client",
+            "Country",
+            "Company code",
+            "Exchange rate type"
+        ],
+        "respuestas_correctas": [2, 4]
+    },
+    {
+        "pregunta": "Your company based in France has a permanent establishment in Switzerland where financial statements are required by law. Which organizational unit do you need to create for the permanent establishment in Switzerland?",
+        "opciones": [
+            "Company code",
+            "Profit center",
+            "Business area",
+            "Segment"
+        ],
+        "respuestas_correctas": [1]
+    },
+    {
+        "pregunta": "SAP S/4HANA has introduced the Universal Journal (table ACDOCA) which represents the single source of truth. Which line items are recorded in the table ACDOCA? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Secondary costs resulting from an assessment",
+            "Plan depreciation amounts",
+            "Primary costs resulting from a distribution",
+            "Budgeted costs for a cost center",
+            "Intercompany postings"
+        ],
+        "respuestas_correctas": [1, 3, 5]
+    },
+    {
+        "pregunta": "What separates the leading ledger from other parallel standard ledgers?",
+        "opciones": [
+            "It is used for performing segment reporting.",
+            "It doesn't derive values from other ledgers.",
+            "It is used to represent the group valuation",
+            "It is assigned to all company codes."
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "You want to prepare a consolidated financial report for your corporate group consisting of 15 legal entities. You have 10 company codes defined in your SAP S/4HANA system in a single client. The others use separate legacy systems. How many companies should you define in your SAP S/4HANA system to accommodate the consolidation scenario?",
+        "opciones": [
+            "1",
+            "5",
+            "15",
+            "10"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "Where do you assign the currency type?",
+        "opciones": [
+            "Company",
+            "Accounting principle",
+            "Ledger",
+            "Valuation area"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "From which G/L account types are values shown in the profit and loss (P&L) statement? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Balance Sheet Account",
+            "Secondary Costs",
+            "Non-operating Expense or Income",
+            "Primary cost or Revenue",
+            "Cash account"
+        ],
+        "respuestas_correctas": [2, 3, 4]
+    },
+    {
+        "pregunta": "What is the prerequisite for a G/L account to switch off open item management for it?",
+        "opciones": [
+            "It has been blocked against postings.",
+            "It has not been posted to.",
+            "It has no open items.",
+            "It has a zero balance."
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "On which level do you maintain the currency translation ratio between two currencies?",
+        "opciones": [
+            "Exchange rate type",
+            "Document type",
+            "Valuation type",
+            "Currency type"
+        ],
+        "respuestas_correctas": [1]
+    },
+    {
+        "pregunta": "You try to assign an alternative account to a G/L account but receive an error message. What can be the reason?",
+        "opciones": [
+            "You have not assigned the alternative chart of accounts to your company.",
+            "The alternative account is already assigned to another G/L account for the company code.",
+            "The alternative account has not been created for the company code.",
+            "You have not assigned the alternative chart of accounts to your operational chart of accounts."
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "You are trying to extend a G/L account to a new company code but are getting an error for incomplete data. All customizable in the field status. Which fields must you always maintain when extending a G/L account? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Account currency",
+            "Field status group",
+            "Sort key",
+            "Account number"
+        ],
+        "respuestas_correctas": [1, 2]
+    },
+    {
+        "pregunta": "You want to post a reversal for a document posted in a closed posting period. Which object do you configure to allow you to enter the reversal with a date different from the original document?",
+        "opciones": [
+            "Document type",
+            "Reversal method",
+            "Reversal reason",
+            "Company code"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "You try to create a G/L account but you get an error because the account number is not in the accepted range. Which object do you need to customize to extend the number range?",
+        "opciones": [
+            "Tolerance group",
+            "Account group",
+            "Chart of accounts",
+            "Account type"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "When defining a new standard ledger, which action must you take to manually post a general journal entry to it?",
+        "opciones": [
+            "Assign the ledger to a company code",
+            "Assign a chart of accounts to the ledger",
+            "Define the underlying ledger",
+            "Include the ledger in a ledger group"
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "You are posting a general journal entry for your company code. After posting the entry, you notice the document number is in the wrong number. After reversing the document, what do you need to change when reposting the document?",
+        "opciones": [
+            "Assignment",
+            "Document type",
+            "Document number",
+            "Posting key"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "Where do you assign the group chart of accounts?",
+        "opciones": [
+            "Company code",
+            "General ledger account",
+            "Company",
+            "Operating chart of accounts"
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "You notice that in the entry view of a document you have fewer items than in the general ledger view. What is the reason for this?",
+        "opciones": [
+            "An extension ledger has been configured.",
+            "The sales tax is posted in details in the general ledger view.",
+            "The sub-ledger accounts are shown in details in the general ledger view.",
+            "Document splitting has been activated."
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "Which fields are maintained on the chart of accounts level of a G/L account? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Account group",
+            "Short text",
+            "Alternative account number",
+            "Field status group",
+            "Group account number"
+        ],
+        "respuestas_correctas": [1, 2, 5]
+    },
+     {
+        "pregunta": "You define the technical clearing account for Integrated Asset Acquisition in Customizing. Which prerequisites must be met? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "The account is a balance sheet account.",
+            "The account is defined as a reconciliation account for fixed assets.",
+            "The account is defined as open item managed.",
+            "The account is defined in the account determination for each asset class."
+        ],
+        "respuestas_correctas": [1, 2]
+    },
+    {
+        "pregunta": "In which scenarios is the technical clearing account posted? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Valuated goods receipt on a purchase order with an asset as account assignment",
+            "Asset transfer posting between asset classes",
+            "Direct asset acquisition posting with a vendor invoice (not linked to a purchase order)",
+            "Settlement of an investment order to an asset under construction"
+        ],
+        "respuestas_correctas": [1, 3]
+    },
+    {
+        "pregunta": "On which levels can you define the technical clearing account for Integrated Asset Acquisition in Customizing? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Depreciation area",
+            "Account determination",
+            "Chart of Accounts",
+            "Asset Class"
+        ],
+        "respuestas_correctas": [2, 3]
+    },
+    {
+        "pregunta": "What are the consequences of the activation of segment reporting in Asset Accounting? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "The segment is automatically updated in existing asset master data.",
+            "The segment appears in the screen layout for asset master data.",
+            "The segment appears in the additional account assignment configuration.",
+            "The segment activation can be reversed."
+        ],
+        "respuestas_correctas": [2, 3]
+    },
+    {
+        "pregunta": "On which levels do you define FI-AA account determination? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Chart of accounts",
+            "Client",
+            "Company code",
+            "Chart of depreciation"
+        ],
+        "respuestas_correctas": [1, 4]
+    },
+    {
+        "pregunta": "What are characteristics of depreciation area 01? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "It must always post in real time.",
+            "It must be linked to leading ledger OL.",
+            "It must be defined as a cost accounting valuation area type.",
+            "It cannot take over values from other areas."
+        ],
+        "respuestas_correctas": [1, 4]
+    },
+    {
+        "pregunta": "You post an unplanned depreciation to an asset. What is the effect on FI-AA and FI-GL?",
+        "opciones": [
+            "Posting is done in FI-AA in real time and in FI-GL once the periodic posting program has run.",
+            "Posting is done in FI-AA and in FI-GL online and in real time.",
+            "Posting is done in FI-AA in real time and in FI-GL once the depreciation posting program has run.",
+            "Posting is not done in FI-AA and in FI-GL until the depreciation posting program has run."
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "You post a vendor invoice for asset acquisition without reference to a purchase order. Which accounting documents are generated?",
+        "opciones": [
+            "One document per accounting principle & one document for all accounting principles",
+            "Separate documents for each and every accounting principle",
+            "One document for all accounting principles",
+            "One document per accounting principle"
+        ],
+        "respuestas_correctas": [1]
+    },
+    {
+        "pregunta": "You want to post depreciation costs of one asset to two cost centers. How do you do this?",
+        "opciones": [
+            "You assign a real internal order in the asset master data which you settle periodically to two cost centers.",
+            "You assign two real cost centers in the asset master data.",
+            "You assign a real cost center and a statistical cost center in the asset master data.",
+            "You assign a statistical order in the asset master data which you settle periodically to two cost centers."
+        ],
+        "respuestas_correctas": [1]
+    },
+    {
+        "pregunta": "You run the balance carry forward for your company code. When looking at the log you see there is an error with regards to Asset Accounting. What is the cause of the error?",
+        "opciones": [
+            "You have not run the settlement for your assets under construction.",
+            "You have incomplete asset master records.",
+            "You have not closed the previous fiscal year.",
+            "You have not posted depreciation completely."
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "You perform the depreciation run for your assets. For a specific asset, you would like to post the depreciation specified in the asset master data. How do you achieve this?",
+        "opciones": [
+            "By changing the corresponding error into a warning via configuration",
+            "By removing the cost center from the asset master data",
+            "By creating a substitution in Financial Accounting line items",
+            "By setting the 'identical' parameter as not activated in the account assignment configuration"
+        ],
+        "respuestas_correctas": [1]
+    },
+    {
+        "pregunta": "You have activated the WBS Element (not related to Investment Management) as an account assignment for asset accounting 'balance sheet and identical active'. What are the consequences? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "The WBS Element is available for input in the asset master record.",
+            "The WBS Element cannot be used anymore for settlement.",
+            "The WBS Element can no longer be changed in the asset master record once the asset is capitalized.",
+            "The WBS Element from the asset master data can be changed during planned depreciation posting."
+        ],
+        "respuestas_correctas": [1, 3]
+    },
+    {
+        "pregunta": "Which of the following objects is only a statistical account assignment for cost postings to an asset?",
+        "opciones": [
+            "WBS element",
+            "Cost center",
+            "Internal order",
+            "Profit center"
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "Your system uses parallel currencies. What is the posting indicator of the depreciation area for the parallel currency?",
+        "opciones": [
+            "Does not post to G/L",
+            "Posts to G/L in real time",
+            "Posts to G/L periodically",
+            "Posts APC real time and depreciation periodically"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "What can you achieve with the legacy data transfer in Asset Accounting via transaction AS91?",
+        "opciones": [
+            "Setting the company code status for legacy data transfer",
+            "Posting the summary write off in G/L",
+            "Creation of master data",
+            "Posting of take over values"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "You post an incoming payment from a customer with a residual item for a payment difference. What are the consequences? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "The residual item is written off to a cost account.",
+            "The residual item becomes a new receivable.",
+            "The original document and the payment are cleared.",
+            "Both the original open item and the residual item remain on the account as open items."
+        ],
+        "respuestas_correctas": [2, 3]
+    },
+    {
+        "pregunta": "You are entering a credit memo in Financial Accounting and are wondering why the entered payment terms are being ignored. What are the reasons? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "The credit memo was entered in Financial Accounting.",
+            "The credit memo was created without reference to an invoice.",
+            "The field Reference of the credit memo is blank.",
+            "The due date determined based on the entered payment terms is in the past."
+        ],
+        "respuestas_correctas": [2, 4]
+    },
+    {
+        "pregunta": "What can you control with the reason code in Accounts Receivable? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "The exclusion of disputed residual items from credit limit checks",
+            "The account where a residual item is posted",
+            "The type of payment notice sent to a customer",
+            "The special G/L indicator for the down payment",
+            "The document type of the payment"
+        ],
+        "respuestas_correctas": [1, 2, 3]
+    },
+    {
+        "pregunta": "You need to explain the concept of noted items in SAP S/4HANA. Which characteristics are specific to noted items? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "They generate postings that do not balance.",
+            "They can be accessed by the payment program and the dunning program.",
+            "They update the general ledger in Entry View only.",
+            "They generate statistical postings.",
+            "They are managed as open items on customer and vendor accounts."
+        ],
+        "respuestas_correctas": [2, 4, 5]
+    },
+    {
+        "pregunta": "At which levels can the print program and its variant be assigned to the correspondence type? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "System",
+            "Client",
+            "Company code",
+            "Company"
+        ],
+        "respuestas_correctas": [2, 3]
+    },
+    {
+        "pregunta": "You define payment methods. Which parameters do you define on the level of the company code? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Minimum and maximum payment amounts",
+            "Payment Medium",
+            "Permitted Currencies",
+            "Foreign currency allowed"
+        ],
+        "respuestas_correctas": [1, 4]
+    },
+    {
+        "pregunta": "You have made an agreement with a customer to guarantee an amount of EUR 10000. What is the result of recording this guarantee in SAP S/4HANA?",
+        "opciones": [
+            "One statistical line item",
+            "Two noted items",
+            "One noted item",
+            "Two statistical line items"
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "In the standard sales process, when is the COGS posting generated in Financial Accounting?",
+        "opciones": [
+            "Create billing document",
+            "Do PGI (Post Goods Issue)",
+            "Issue customer invoice",
+            "Create delivery document"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "What do you configure for regrouping receivables and payables?",
+        "opciones": [
+            "Calculation Method",
+            "Valuation Method",
+            "Provision Method",
+            "Sort Method"
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "You have cleared a customer open item but want to undo this action. What are the available options? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Repost the clearing document",
+            "Reverse the clearing document",
+            "Reset the clearing document",
+            "Reset and reverse the clearing document"
+        ],
+        "respuestas_correctas": [3, 4]
+    },
+    {
+        "pregunta": "Which parameters can you configure on the dunning level? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Payment deadline",
+            "Interest indicator",
+            "Line-item grace period",
+            "Days in arrears"
+        ],
+        "respuestas_correctas": [1, 4]
+    },
+    {
+        "pregunta": "You want to include multiple company codes in a single payment run. What are the prerequisites for the company codes?",
+        "opciones": [
+            "They must all belong to the same company.",
+            "They must have the same configuration for payment transactions.",
+            "They must be located in the same country.",
+            "They must belong to the same controlling area."
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "Which date must the system determine when you enter an invoice that needs to be paid?",
+        "opciones": [
+            "Reference date",
+            "Payment date",
+            "Order date",
+            "Baseline date"
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "The 3-way match is the standard procedure used to post procurement transactions in SAP S/4HANA. How does it work?",
+        "opciones": [
+            "The goods receipt needs to be created in reference to the purchase order.",
+            "The 3 logistical steps each generate financial documents.",
+            "The purchase order needs to be created in reference to a purchase request.",
+            "The invoice needs to be created in reference to the goods receipt."
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "What are the 3 mandatory steps of the dunning process in the SAP S/4HANA system? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Approve the dunning proposal",
+            "Schedule the dunning run",
+            "Maintain the parameters of the dunning program",
+            "Start the dunning printout",
+            "Change the dunning proposal"
+        ],
+        "respuestas_correctas": [2, 3, 4]
+    },
+    {
+        "pregunta": "Which currency types are defaulted in SAP S/4HANA? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "00 = Document currency",
+            "30 = Group currency",
+            "10 Company code currency",
+            "20 Controlling area currency"
+        ],
+        "respuestas_correctas": [1, 3]
+    },
+    {
+        "pregunta": "Your company structures its Profit & Loss (P&L) statement according to cost-of-sales accounting. Which organizational unit do you need to define?",
+        "opciones": [
+            "Business area",
+            "Functional area",
+            "Profit center",
+            "Segment"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "You perform foreign currency valuation for open items of your supplier accounts. The valuations will be used only for period end reporting and should then be reversed. What account does the system use to post the valuation differences?",
+        "opciones": [
+            "Individual supplier accounts with special G/L indicator",
+            "Alternative reconciliation G/L account",
+            "Adjustment G/L account for foreign currency",
+            "Supplier reconciliation G/L account"
+        ],
+        "respuestas_correctas": [3]
+    },
+    {
+        "pregunta": "How does the system determine the relevant accounting principle when performing foreign currency valuation?",
+        "opciones": [
+            "Via the valuation type",
+            "Via the valuation area",
+            "Via the valuation class",
+            "Via the valuation method"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "How would you define Intercompany Matching and Reconciliation (ICMR)? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "It is a solution that facilitates transaction matching between systems in Central Finance.",
+            "It is a solution that requires the parallel implementation of SAP Group Reporting Data Collection.",
+            "It is a solution embedded in the SAP S/4HANA core.",
+            "It is a solution that can be integrated with Group Reporting."
+        ],
+        "respuestas_correctas": [1, 4]
+    },
+    {
+        "pregunta": "You are implementing the Cockpit for your organization. What are the advantages of defining task groups? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "It allows cross task list execution of tasks.",
+            "It allows cross task list monitoring of task status.",
+            "It allows cross template maintenance.",
+            "It covers multiple companies with same or similar tasks."
+        ],
+        "respuestas_correctas": [3, 4]
+    },
+    {
+        "pregunta": "On what level can you restrict postings using the posting period variant? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Fixed asset number",
+            "G/L account",
+            "Customer reconciliation account",
+            "Supplier account"
+        ],
+        "respuestas_correctas": [2, 4]
+    },
+    {
+        "pregunta": "What is the role of the valuation method in the foreign currency valuation? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Determine the exchange rate type",
+            "Define the document type for the valuation posting",
+            "Determine the G/L accounts for the valuation posting",
+            "Define the posting and reversal date for the valuation posting",
+            "Define the valuation procedure"
+        ],
+        "respuestas_correctas": [1, 2, 5]
+    },
+    {
+        "pregunta": "Which physical inventory methods are available in SAP S/4HANA? Note: There are 3 correct answers to this question.",
+        "opciones": [
+            "Actual inventory method",
+            "Periodic inventory method",
+            "Cycle counting method",
+            "Standard inventory method",
+            "Continuous inventory method"
+        ],
+        "respuestas_correctas": [2, 3, 5]
+    },
+    {
+        "pregunta": "Where can you see the matching results from the Intercompany Matching and Reconciliation tool?",
+        "opciones": [
+            "In the Consolidation Journal table (ACDOCU)",
+            "In an application specific table (ICADOCM)",
+            "In the Accounting Document Segment table (BSEG)",
+            "In the Universal Journal table (ACDOCA)"
+        ],
+        "respuestas_correctas": [2]
+    },
+    {
+        "pregunta": "You run a financial statement report and notice the net profit calculated is different than what you expect. What could cause the issue? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "You selected account group assignment by balance for an account and it is displayed as a liability.",
+            "You have accounts that you have not assigned in the financial statement version.",
+            "You have added an account to the liabilities node that belongs to the financial statement notes.",
+            "You have added an account to the wrong node and it is included in the assets section."
+        ],
+        "respuestas_correctas": [2, 4]
+    },
+    {
+        "pregunta": "You notice that the GR/IR account does not have a zero balance. What could be the cause? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "A purchase order has a goods receipt and an invoice receipt with the same quantity but with different values.",
+            "A purchase order has a goods receipt and an invoice receipt with the same quantity and values.",
+            "A purchase order has a partial invoice receipt but not yet a goods receipt.",
+            "A purchase order has a partial goods receipt for which we have not yet received an invoice."
+        ],
+        "respuestas_correctas": [3, 4]
+    },
+    {
+        "pregunta": "Your organization has heard about SAP Intercompany Matching and Reconciliation (ICMR) and is wondering whether it could address their needs. For which purposes can ICMR be useful? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "To trigger elimination of intercompany revenues & costs based on rules configured",
+            "To generate automatic elimination of intercompany AR/AP balances",
+            "To generate automatic posting to correct intercompany discrepancy",
+            "To highlight and solve intercompany data discrepancy triggering a workflow"
+        ],
+        "respuestas_correctas": [3, 4]
+    },
+    {
+        "pregunta": "As a pre-closing activity, selected suppliers are to confirm their balances. Which confirmation procedure do you use when a response is expected only in case of discrepancies?",
+        "opciones": [
+            "Balance confirmation",
+            "Account statement",
+            "Balance request",
+            "Balance notification"
+        ],
+        "respuestas_correctas": [4]
+    },
+    {
+        "pregunta": "Which items are taken into account during foreign currency valuation? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "Balance valuation on items for balance sheet accounts not defined as open item management",
+            "Line item valuation for balance sheet accounts not defined as reconciliation account",
+            "Balance valuation on items for balance sheet accounts defined with ledger group specific open item management",
+            "Line item valuation for balance sheet accounts defined as open item management"
+        ],
+        "respuestas_correctas": [3, 4]
+    },
+    {
+        "pregunta": "What does the fiscal year variant define? Note: There are 2 correct answers to this question.",
+        "opciones": [
+            "The start and end date of posting periods",
+            "The authorization to post to special periods",
+            "The number of posting periods",
+            "The posting periods open for posting"
+        ],
+        "respuestas_correctas": [1, 3]
+    }
+]
+def obtener_ultimo_resultado(nombre_usuario):
+    try:
+        with open('resultados_examen.csv', 'r') as archivo_csv:
+            lector_csv = csv.reader(archivo_csv)
+            next(lector_csv)  # Saltar la primera fila (encabezados)
+            for fila in lector_csv:
+                if fila[0] == nombre_usuario:
+                    return int(fila[1])  # Devolver el último puntaje encontrado
+    except FileNotFoundError:
+        pass  # Ignorar si el archivo no existe
+    return None  # Devolver None si no se encuentra el usuario
+
+def guardar_resultado(nombre_usuario, puntaje):
+    with open('resultados_examen.csv', 'a', newline='') as archivo_csv:
+        escritor_csv = csv.writer(archivo_csv)
+        # Si el archivo está vacío, agregar encabezados
+        if archivo_csv.tell() == 0:
+            escritor_csv.writerow(['Nombre', 'Puntaje'])
+        escritor_csv.writerow([nombre_usuario, puntaje])
+    print(f"El resultado se ha guardado para {nombre_usuario}.")
+
+def realizar_examen(base_preguntas):
+    nombre_usuario = input("Por favor, ingresa tu nombre: ")
+
+    ultimo_resultado = obtener_ultimo_resultado(nombre_usuario)
+    if ultimo_resultado is not None:
+        print(f"Tu último resultado fue: {ultimo_resultado}%")
+
+    print("Bienvenido al examen. Responde las preguntas seleccionadas.")
+
+    # Seleccionar preguntas aleatoriamente
+    preguntas_seleccionadas = random.sample(base_preguntas, min(num_preguntas, len(base_preguntas)))
+
+    respuestas_correctas = 0
+    respuestas_incorrectas = []  # Lista para almacenar las respuestas incorrectas
+
+    for i, pregunta in enumerate(preguntas_seleccionadas, 1):
+        print(f"\nPregunta {i}: {pregunta['pregunta']}\n")
+
+        # Reordenar aleatoriamente las opciones de la pregunta
+        opciones = pregunta['opciones'][:]  # Crear una copia de las opciones
+        random.shuffle(opciones)  # Reordenar la copia
+
+        for j, opcion in enumerate(opciones):  # Iterar sobre la copia reordenada
+            if opcion is not None and opcion != "":
+                print(f"  {j + 1}. {opcion}")
+
+        print()
+
+        while True:
+            try:
+                respuesta = input("Tu respuesta (puedes ingresar múltiples opciones separadas por comas, e.g., 1,3): ")
+                indices_respuestas = [int(x.strip()) for x in respuesta.split(",")]
+
+                # Ajustar los índices de las respuestas según el orden actual de las opciones
+                indices_respuestas_ajustados = []
+                for idx in indices_respuestas:
+                    if 1 <= idx <= len(opciones):  # Verificar si el índice es válido
+                        opcion_seleccionada = opciones[idx - 1]  # Obtener la opción seleccionada
+                        indice_original = pregunta['opciones'].index(opcion_seleccionada) + 1  # Encontrar el índice original
+                        indices_respuestas_ajustados.append(indice_original)  # Agregar el índice original a la lista ajustada
+                    else:
+                        print("Por favor, ingresa números válidos dentro del rango de opciones (1 a 5).")
+                        break  # Salir del bucle si hay un índice inválido
+
+                if len(indices_respuestas) == len(indices_respuestas_ajustados):  # Verificar si todo
+                    break  # Salir del bucle si todos los índices son válidos
+            except ValueError:
+                print("Por favor, ingresa números separados por comas.")
+
+        # Verificar si la respuesta es correcta
+        if sorted(indices_respuestas_ajustados) == sorted(pregunta['respuestas_correctas']):
+            respuestas_correctas += 1
+        else:
+            respuestas_incorrectas.append({
+                'pregunta': pregunta['pregunta'],
+                'respuesta_usuario': indices_respuestas_ajustados,
+                'respuesta_correcta': pregunta['respuestas_correctas'],
+                'opciones': pregunta['opciones']  # Agregar las opciones para el resumen
+            })
+
+    # Calcular el puntaje
+    puntaje = (respuestas_correctas / len(preguntas_seleccionadas)) * 100
+
+    print(f"\nTu puntaje es: {puntaje:.2f}%")
+    if puntaje >= nota_aprobacion:
+        print("¡Felicitaciones, aprobaste el examen!")
+    else:
+        print("Lo siento, no aprobaste el examen. Sigue estudiando.")
+
+    guardar_resultado(nombre_usuario, int(puntaje))
+
+    # Mostrar resumen de preguntas incorrectas
+    if respuestas_incorrectas:  # Verificar si hay preguntas incorrectas antes de imprimir el resumen
+        print("\nResumen de preguntas incorrectas:")
+        for incorrecta in respuestas_incorrectas:
+            print(f"\nPregunta: {incorrecta['pregunta']}")
+            print(f"Tu respuesta: {', '.join([incorrecta['opciones'][i - 1] for i in incorrecta['respuesta_usuario']])}")  # Mostrar las opciones seleccionadas por el usuario
+            print(f"Respuesta correcta: {', '.join([incorrecta['opciones'][i - 1] for i in incorrecta['respuesta_correcta']])}")  # Mostrar las opciones correctas
+
+# Iniciar el examen
+realizar_examen(base_preguntas)
